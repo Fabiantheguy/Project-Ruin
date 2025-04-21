@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using KinematicCharacterController;
 using System;
+using UnityEngine.Video;
 
 namespace KinematicCharacterController.Examples
 {
@@ -87,7 +88,6 @@ namespace KinematicCharacterController.Examples
         private Vector3 lastVelocity;
         private float lastGroundedTime;
         private float lastJumpTime;
-        private float jumpCooldown = 0.05f;
 
 
         // Transform move input to be relative to camera view
@@ -124,6 +124,42 @@ namespace KinematicCharacterController.Examples
         public Vector3 _velocityBeforeGrounding;
         private bool wasGroundedLastFrame = true;
         public float SlideLandingBoostMultiplier = 1.2f; // Adjust as needed
+                                                        
+        [Header("Slope Handling")]
+        public float SteepSlopeAngleThreshold = 45f;
+        public float SteepSlopeJumpBoostMultiplier = 1.4f;
+        public float PassiveSteepSlopeSlideSpeed = 1.5f;
+        public float MinSteepSlopeBoostSpeed = 5f;
+        public float MaxSteepSlopeBoostSpeed = 12f;
+        public float BounceMultiplier = 8f;
+
+        [Header("Sound")]
+        public AudioClip sandFootstepClip;
+        public AudioClip jumpClip;
+        public AudioClip landClip;
+        public AudioClip slideClip;
+        public AudioClip windClip;
+        public float windSpeedThreshold = 10f; // Minimum speed before wind starts
+        public float windVolumeMultiplier = 0.1f; // How quickly volume scales
+        public float MaxWindSpeed = 10f; // Define MaxWindSpeed
+        private float _currentWindSpeed = 0f; // Current wind speed, can be changed dynamically
+        private bool isSlideSoundPlaying = false;
+        private bool _playedLandSound = false;
+        public float footstepInterval = 2f; // Distance between steps
+        private float footstepDistanceCounter = 0f;
+        public AudioSource audioSource;
+        public AudioSource slideAudioSource;
+        public AudioSource windAudioSource;
+
+        [Header("Sound")]
+        public VideoPlayer videoPlayer;  // Reference to the VideoPlayer component
+        public Renderer videoRenderer;  // Renderer for the video GameObject (if applicable)
+        public float speedThreshold = 5f;  // Speed at which video starts playing and alpha begins adjusting
+        public float maxSpeed = 20f;  // Max player speed
+        public float minAlpha = 0.1f;  // Min alpha value
+        public float maxAlpha = 1f;  // Max alpha value
+        public float minPlaybackSpeed = 0.5f;  // Min playback speed
+        public float maxPlaybackSpeed = 2f;  // Max playback speed
 
         private Vector3 lastInnerNormal = Vector3.zero;
         private Vector3 lastOuterNormal = Vector3.zero;
@@ -135,6 +171,14 @@ namespace KinematicCharacterController.Examples
 
             // Assign the characterController to the motor
             Motor.CharacterController = this;
+
+            if (windAudioSource == null && windClip != null)
+            {
+                windAudioSource.clip = windClip;
+                windAudioSource.loop = true;
+                windAudioSource.playOnAwake = false;
+                windAudioSource.spatialBlend = 1f; // 3D sound
+            }
         }
 
         /// <summary>
@@ -312,11 +356,55 @@ namespace KinematicCharacterController.Examples
         {
             bool isGrounded = Motor.GroundingStatus.IsStableOnGround;
 
-            // Track vertical velocity before grounding
             _velocityBeforeGrounding = currentVelocity;
 
+            float slopeAngle = 0f;
+            if (Motor.GroundingStatus.FoundAnyGround)
+            {
+                slopeAngle = Vector3.Angle(Motor.CharacterUp, Motor.GroundingStatus.GroundNormal);
+            }
+
+            // Calculate horizontal speed
+            float horizontalSpeed = new Vector3(currentVelocity.x, 0f, currentVelocity.z).magnitude;
+            // Calculate total speed (not just horizontal)
+            float totalSpeed = currentVelocity.magnitude;
+
+            // Wind sound logic based on total speed
+            if (totalSpeed > windSpeedThreshold)
+            {
+                float windVolume = Mathf.Clamp01(totalSpeed / MaxWindSpeed);
+                windAudioSource.volume = windVolume * windVolumeMultiplier;
+
+                if (!windAudioSource.isPlaying)
+                {
+                    PlayWindSound();
+                }
+            }
+            else
+            {
+                StopWindSound(); // Stop wind sound when below the threshold
+            }
+
+            // Speed-based logic for the video alpha and playback speed
+            float speedPercentage = Mathf.InverseLerp(speedThreshold, maxSpeed, totalSpeed);
+
+            // Adjust video alpha based on speed
+            if (videoRenderer != null)  // Assuming you're modifying the material of the video object
+            {
+                Color color = videoRenderer.material.color;
+                videoPlayer.targetCameraAlpha = Mathf.Lerp(minAlpha, maxAlpha, speedPercentage);
+                videoRenderer.material.color = color;
+            }
+
+            // Adjust video playback speed based on speed
+            if (videoPlayer != null)
+            {
+                videoPlayer.playbackSpeed = Mathf.Lerp(minPlaybackSpeed, maxPlaybackSpeed, speedPercentage);
+            }
             if (isGrounded)
             {
+                bool isApproachingUphill = Vector3.Dot(currentVelocity.normalized, Motor.GroundingStatus.GroundNormal) > 0.5f;
+
                 if (!_isMomentumActive)
                 {
                     _momentumTimer = _momentumDecayDuration;
@@ -326,7 +414,6 @@ namespace KinematicCharacterController.Examples
                 Vector3 effectiveGroundNormal = Motor.GroundingStatus.GroundNormal;
                 bool isSliding = _isCrouching;
 
-                // Check if the player has just landed into a slide
                 bool landedWhileSliding = false;
                 Vector3 landingBoost = Vector3.zero;
 
@@ -337,8 +424,16 @@ namespace KinematicCharacterController.Examples
                     Vector3 slideDirection = Vector3.ProjectOnPlane(Vector3.down, effectiveGroundNormal).normalized;
                     float fallSpeed = Mathf.Abs(_velocityBeforeGrounding.y);
 
-                    landingBoost = slideDirection * fallSpeed * SlideLandingBoostMultiplier;
+                    float steepnessFactor = Mathf.InverseLerp(SlideSlopeThreshold, 80f, slopeAngle);
+                    float boostedStrength = Mathf.Lerp(1f, 2f, steepnessFactor);
+
+                    landingBoost = slideDirection * fallSpeed * SlideLandingBoostMultiplier * boostedStrength;
                     _justBoostedThisFrame = true;
+                }
+
+                if (!wasGroundedLastFrame && !isSliding)
+                {
+                    PlayLandSound();
                 }
 
                 wasGroundedLastFrame = true;
@@ -352,14 +447,12 @@ namespace KinematicCharacterController.Examples
 
                     float currentSpeed = currentVelocity.magnitude;
 
-                    // Unground if sliding off an edge
                     if (!Motor.GroundingStatus.IsStableOnGround && !Motor.GroundingStatus.SnappingPrevented)
                     {
                         Motor.ForceUnground();
                         return;
                     }
 
-                    // Only project onto slope after landing boost
                     if (!_justBoostedThisFrame)
                     {
                         currentVelocity = Vector3.ProjectOnPlane(currentVelocity, effectiveGroundNormal);
@@ -374,14 +467,12 @@ namespace KinematicCharacterController.Examples
                         currentVelocity = Vector3.Lerp(currentVelocity, currentVelocity + inputInfluence, deltaTime * SlideControlResponsiveness);
                     }
 
-                    float slopeAngle = Vector3.Angle(Motor.CharacterUp, effectiveGroundNormal);
                     if (slopeAngle > SlideSlopeThreshold)
                     {
                         Vector3 slopeDir = Vector3.ProjectOnPlane(Vector3.down, effectiveGroundNormal).normalized;
                         currentVelocity += slopeDir * SlideAcceleration * deltaTime;
                     }
 
-                    // Apply decay unless we're in the first frame of boosting
                     if (!_justBoostedThisFrame)
                     {
                         if (_momentumTimer <= 0f)
@@ -394,25 +485,43 @@ namespace KinematicCharacterController.Examples
                         }
                     }
 
+                    if (isSliding || (_moveInputVector.sqrMagnitude == 0f && currentVelocity.magnitude > 0.1f))
+                    {
+                        PlaySlideSound();
+                    }
+                    else
+                    {
+                        StopSlideSound();
+                    }
+
+                    StopFootstepSound();
+
                     _justBoostedThisFrame = false;
                 }
                 else
                 {
-                    // Standard grounded movement
                     float currentVelocityMagnitude = currentVelocity.magnitude;
-
                     currentVelocity = Motor.GetDirectionTangentToSurface(currentVelocity, effectiveGroundNormal) * currentVelocityMagnitude;
 
                     Vector3 inputRight = Vector3.Cross(_moveInputVector, Motor.CharacterUp);
                     Vector3 reorientedInput = Vector3.Cross(effectiveGroundNormal, inputRight).normalized * _moveInputVector.magnitude;
+
+                    // Base movement speed
                     Vector3 targetVelocity = reorientedInput * MaxStableMoveSpeed;
 
-                    Vector3 horizontalVel = Vector3.ProjectOnPlane(currentVelocity, Motor.CharacterUp);
-                    currentVelocity -= horizontalVel * GroundFriction * deltaTime;
+                    // Apply downhill boost if moving downhill
+                    if (Vector3.Dot(reorientedInput.normalized, effectiveGroundNormal) < -0.2f)
+                    {
+                        float slopeFactor = Mathf.InverseLerp(0f, 60f, slopeAngle);
+                        float downhillMultiplier = Mathf.Lerp(1f, 1.4f, slopeFactor);
+                        targetVelocity *= downhillMultiplier;
+                    }
 
+                    // Apply velocity toward target
                     currentVelocity = Vector3.Lerp(currentVelocity, targetVelocity, 1f - Mathf.Exp(-StableMovementSharpness * deltaTime));
 
-                    if (_momentumTimer <= 0f)
+                    // Apply momentum decay only when not moving
+                    if (_momentumTimer <= 0f && _moveInputVector.sqrMagnitude == 0f)
                     {
                         currentVelocity *= (1f - _momentumDecayRate);
                     }
@@ -420,11 +529,41 @@ namespace KinematicCharacterController.Examples
                     {
                         _momentumTimer -= deltaTime;
                     }
+
+                    // Bounce on steep uphill if jumping
+                    if (slopeAngle > SteepSlopeAngleThreshold && !_isCrouching && isApproachingUphill && _jumpRequested)
+                    {
+                        float upwardMomentumBoost = Mathf.Lerp(1f, 1.5f, Mathf.InverseLerp(SteepSlopeAngleThreshold, 80f, slopeAngle));
+                        currentVelocity += Motor.CharacterUp * 0.5f * upwardMomentumBoost;
+                    }
+
+
+                    // Sound logic
+                    footstepDistanceCounter += horizontalSpeed * deltaTime;
+
+                    if (_moveInputVector.sqrMagnitude > 0f && footstepDistanceCounter >= footstepInterval)
+                    {
+                        PlayFootstepSound();
+                        footstepDistanceCounter = 0f;
+                    }
+                    else if (_moveInputVector.sqrMagnitude <= 0f)
+                    {
+                        StopFootstepSound();
+                    }
+
+                    if (_moveInputVector.sqrMagnitude == 0f && horizontalSpeed > 0.1f)
+                    {
+                        PlaySlideSound();
+                    }
+                    else
+                    {
+                        StopSlideSound();
+                    }
                 }
+
             }
             else
             {
-                // Air movement
                 wasGroundedLastFrame = false;
 
                 if (_isCrouching)
@@ -446,9 +585,11 @@ namespace KinematicCharacterController.Examples
 
                 currentVelocity += Gravity * deltaTime;
                 currentVelocity *= (1f / (1f + Drag * deltaTime));
+
+                StopFootstepSound();
+                StopSlideSound();
             }
 
-            // Handle jumping
             _timeSinceJumpRequested += deltaTime;
             if (_jumpRequested)
             {
@@ -468,8 +609,17 @@ namespace KinematicCharacterController.Examples
                         jumpDir = Motor.GroundingStatus.GroundNormal;
                     }
 
+                    float adjustedJumpSpeed = JumpUpSpeed;
+                    if (slopeAngle > SteepSlopeAngleThreshold && horizontalSpeed > MinSteepSlopeBoostSpeed)
+                    {
+                        float boostFactor = Mathf.InverseLerp(MinSteepSlopeBoostSpeed, MaxSteepSlopeBoostSpeed, horizontalSpeed);
+                        adjustedJumpSpeed *= Mathf.Lerp(1f, SteepSlopeJumpBoostMultiplier, boostFactor);
+                    }
+
                     Motor.ForceUnground();
-                    currentVelocity += jumpDir * JumpUpSpeed;
+                    currentVelocity += jumpDir * adjustedJumpSpeed;
+
+                    PlayJumpSound();
 
                     if (_moveInputVector.sqrMagnitude > 0f)
                     {
@@ -483,13 +633,88 @@ namespace KinematicCharacterController.Examples
                 }
             }
 
-            // Apply internal forces
             if (_internalVelocityAdd.sqrMagnitude > 0f)
             {
                 currentVelocity += _internalVelocityAdd;
                 _internalVelocityAdd = Vector3.zero;
             }
         }
+
+
+
+        void PlayFootstepSound()
+        {
+            if (sandFootstepClip != null && audioSource != null)
+            {
+                UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);
+                audioSource.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
+                audioSource.PlayOneShot(sandFootstepClip);
+            }
+        }
+
+        void StopFootstepSound()
+        {
+            if (audioSource != null && audioSource.clip == sandFootstepClip && audioSource.isPlaying)
+            {
+                audioSource.Stop();
+            }
+        }
+
+        void PlayJumpSound()
+        {
+            if (jumpClip != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(jumpClip);
+            }
+        }
+
+        void PlayLandSound()
+        {
+            if (landClip != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(landClip);
+            }
+        }
+
+        void PlaySlideSound()
+        {
+            if (slideClip != null && slideAudioSource != null && (!slideAudioSource.isPlaying || slideAudioSource.clip != slideClip))
+            {
+                slideAudioSource.loop = true;
+                slideAudioSource.clip = slideClip;
+                slideAudioSource.Play();
+            }
+        }
+
+        void StopSlideSound()
+        {
+            if (slideAudioSource != null && slideAudioSource.clip == slideClip && slideAudioSource.isPlaying)
+            {
+                slideAudioSource.Stop();
+                slideAudioSource.loop = false;
+            }
+        }
+        private void PlayWindSound()
+        {
+            if (windAudioSource != null && !windAudioSource.isPlaying)
+            {
+                windAudioSource.clip = windClip; // Ensure the correct clip is assigned
+                windAudioSource.Play();
+            }
+        }
+
+        private void StopWindSound()
+        {
+            if (windAudioSource != null && windAudioSource.isPlaying)
+            {
+                windAudioSource.Stop();
+            }
+        }
+
+
+
+
+
 
 
 
