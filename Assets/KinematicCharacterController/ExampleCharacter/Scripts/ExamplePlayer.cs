@@ -4,8 +4,11 @@ using UnityEngine;
 using KinematicCharacterController;
 using KinematicCharacterController.Examples;
 
+
 namespace KinematicCharacterController.Examples
 {
+
+
     public class ExamplePlayer : MonoBehaviour
     {
         public ExampleCharacterController Character;
@@ -16,6 +19,14 @@ namespace KinematicCharacterController.Examples
         private const string MouseScrollInput = "Mouse ScrollWheel";
         private const string HorizontalInput = "Horizontal";
         private const string VerticalInput = "Vertical";
+
+        [Header("Arrow Key Camera Control")]
+        public float ArrowKeyRotationSpeed = 90f; // degrees per second
+        public float ArrowKeySmoothTime = 0.1f;
+
+        private Vector2 _arrowKeyLookVelocity;
+        private Vector2 _arrowKeyLookInput;
+        private Vector2 _arrowKeyLookCurrent;
 
         private void Start()
         {
@@ -53,32 +64,61 @@ namespace KinematicCharacterController.Examples
 
         private void HandleCameraInput()
         {
-            // Create the look input vector for the camera
+            // Mouse look input
             float mouseLookAxisUp = Input.GetAxisRaw(MouseYInput);
             float mouseLookAxisRight = Input.GetAxisRaw(MouseXInput);
             Vector3 lookInputVector = new Vector3(mouseLookAxisRight, mouseLookAxisUp, 0f);
 
-            // Prevent moving the camera while the cursor isn't locked
+            // Prevent mouse movement when cursor unlocked
             if (Cursor.lockState != CursorLockMode.Locked)
             {
                 lookInputVector = Vector3.zero;
             }
 
-            // Input for zooming the camera (disabled in WebGL because it can cause problems)
+            // Arrow key input (adds to look vector)
+            Vector2 targetArrowLook = Vector2.zero;
+            if (Input.GetKey(KeyCode.UpArrow)) targetArrowLook.y += 1f;
+            if (Input.GetKey(KeyCode.DownArrow)) targetArrowLook.y -= 1f;
+            if (Input.GetKey(KeyCode.LeftArrow)) targetArrowLook.x -= 1f;
+            if (Input.GetKey(KeyCode.RightArrow)) targetArrowLook.x += 1f;
+
+            // Smooth the arrow key input
+            _arrowKeyLookInput = Vector2.SmoothDamp(
+                _arrowKeyLookInput,
+                targetArrowLook,
+                ref _arrowKeyLookVelocity,
+                ArrowKeySmoothTime
+            );
+
+            // Convert to a scaled look vector (degrees per second)
+            Vector3 arrowLookVector = new Vector3(
+                _arrowKeyLookInput.x * ArrowKeyRotationSpeed * Time.deltaTime,
+                _arrowKeyLookInput.y * ArrowKeyRotationSpeed * Time.deltaTime,
+                0f
+            );
+
+            // Combine with mouse input
+            Vector3 finalLookInput = lookInputVector + arrowLookVector;
+
+            // Zoom
             float scrollInput = -Input.GetAxis(MouseScrollInput);
 #if UNITY_WEBGL
-        scrollInput = 0f;
+    scrollInput = 0f;
 #endif
 
-            // Apply inputs to the camera
-            CharacterCamera.UpdateWithInput(Time.deltaTime, scrollInput, lookInputVector);
+            // Apply to camera
+            CharacterCamera.UpdateWithInput(Time.deltaTime, scrollInput, finalLookInput);
 
-            // Handle toggling zoom level
+            // Toggle first/third person
             if (Input.GetMouseButtonDown(1))
             {
                 CharacterCamera.TargetDistance = (CharacterCamera.TargetDistance == 0f) ? CharacterCamera.DefaultDistance : 0f;
             }
         }
+
+
+
+
 
         private void HandleCharacterInput()
         {

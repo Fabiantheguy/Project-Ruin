@@ -22236,6 +22236,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Character: {fileID: 6611558534064293502}
   CharacterCamera: {fileID: 5530455799321397187}
+  ArrowKeyRotationSpeed: 110
+  ArrowKeySmoothTime: 0.05
 --- !u!4 &1004713170
 Transform:
   m_ObjectHideFlags: 0
@@ -45852,9 +45854,9 @@ MonoBehaviour:
   Camera: {fileID: 5553693056096936871}
   FollowPointFraming: {x: 0, y: 0}
   FollowingSharpness: 1e+9
-  DefaultDistance: 6
+  DefaultDistance: 0
   MinDistance: 0
-  MaxDistance: 10
+  MaxDistance: 0
   DistanceMovementSpeed: 5
   DistanceMovementSharpness: 10
   InvertX: 0
@@ -46385,7 +46387,7 @@ MonoBehaviour:
   OrientationSharpness: 20
   OrientationMethod: 0
   MaxAirMoveSpeed: 3
-  AirAccelerationSpeed: 65
+  AirAccelerationSpeed: 85
   Drag: 0
   AllowJumpingWhenSliding: 1
   JumpUpSpeed: 10
@@ -46414,7 +46416,7 @@ MonoBehaviour:
   SlideControlResponsiveness: 5
   SlideAcceleration: 20
   SlideDecayRate: 0.01
-  SlideSlopeThreshold: 10
+  SlideSlopeThreshold: 5
   SlideFriction: 0.2
   SlideInputSpeedThreshold: 3
   SlideInputControlStrength: 0.5

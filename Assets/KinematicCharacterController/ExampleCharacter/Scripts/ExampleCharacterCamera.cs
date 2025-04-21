@@ -44,6 +44,26 @@ namespace KinematicCharacterController.Examples
         public Vector3 PlanarDirection { get; set; }
         public float TargetDistance { get; set; }
 
+        public Vector3 PlanarForward
+        {
+            get
+            {
+                Vector3 forward = Transform.forward;
+                forward.y = 0f;
+                return forward.normalized;
+            }
+        }
+
+        public Vector3 PlanarRight
+        {
+            get
+            {
+                Vector3 right = Transform.right;
+                right.y = 0f;
+                return right.normalized;
+            }
+        }
+
         private bool _distanceIsObstructed;
         private float _currentDistance;
         private float _targetVerticalAngle;
@@ -135,14 +155,6 @@ namespace KinematicCharacterController.Examples
                                 break;
                             }
                         }
-                        for (int j = 0; j < IgnoredColliders.Count; j++)
-                        {
-                            if (IgnoredColliders[j] == _obstructions[i].collider)
-                            {
-                                isIgnored = true;
-                                break;
-                            }
-                        }
 
                         if (!isIgnored && _obstructions[i].distance < closestHit.distance && _obstructions[i].distance > 0)
                         {
@@ -150,7 +162,7 @@ namespace KinematicCharacterController.Examples
                         }
                     }
 
-                    // If obstructions detecter
+                    // If obstructions detected
                     if (closestHit.distance < Mathf.Infinity)
                     {
                         _distanceIsObstructed = true;
@@ -163,7 +175,7 @@ namespace KinematicCharacterController.Examples
                         _currentDistance = Mathf.Lerp(_currentDistance, TargetDistance, 1 - Mathf.Exp(-DistanceMovementSharpness * deltaTime));
                     }
                 }
-
+                    
                 // Find the smoothed camera orbit position
                 Vector3 targetPosition = _currentFollowPosition - ((targetRotation * Vector3.forward) * _currentDistance);
 
@@ -176,4 +188,4 @@ namespace KinematicCharacterController.Examples
             }
         }
     }
-}
+}   
