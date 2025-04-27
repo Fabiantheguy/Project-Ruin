@@ -100,7 +100,7 @@ namespace KinematicCharacterController.Examples
             // Zoom
             float scrollInput = -Input.GetAxis(MouseScrollInput);
 #if UNITY_WEBGL
-    scrollInput = 0f;
+            scrollInput = 0f;
 #endif
 
             // Apply to camera
@@ -117,15 +117,19 @@ namespace KinematicCharacterController.Examples
         {
             PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
 
-            // Prevent the arrow keys from affecting character movement (ignore them for movement)
+            // Get movement input from WASD or any other movement keys
             float moveAxisForward = Input.GetAxisRaw(VerticalInput);
             float moveAxisRight = Input.GetAxisRaw(HorizontalInput);
 
-            // If arrow keys are being used for movement, don't apply their values
-            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow))
+            // If WASD is pressed, allow movement, else prevent movement with arrow keys
+            if (moveAxisForward == 0f && moveAxisRight == 0f)
             {
-                moveAxisForward = 0f;
-                moveAxisRight = 0f;
+                if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow))
+                {
+                    // Block movement if arrow keys are pressed and no WASD movement
+                    moveAxisForward = 0f;
+                    moveAxisRight = 0f;
+                }
             }
 
             // Build the CharacterInputs struct

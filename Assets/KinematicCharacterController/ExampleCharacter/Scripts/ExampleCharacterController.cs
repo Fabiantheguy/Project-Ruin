@@ -4,6 +4,7 @@ using UnityEngine;
 using KinematicCharacterController;
 using System;
 using UnityEngine.Video;
+using UnityEngine.Rendering.Universal;
 
 namespace KinematicCharacterController.Examples
 {
@@ -146,6 +147,13 @@ namespace KinematicCharacterController.Examples
         private bool isSlideSoundPlaying = false;
         private bool _playedLandSound = false;
         public float footstepInterval = 2f; // Distance between steps
+        public GameObject FootstepPrefab; // Assign in Inspector
+        public Transform LeftFootTransform;
+        public Transform RightFootTransform;
+
+        private float _footstepDistanceThreshold = 0.5f;
+        private Vector3 _lastLeftFootstepPos;
+        private Vector3 _lastRightFootstepPos;
         private float footstepDistanceCounter = 0f;
         public AudioSource audioSource;
         public AudioSource slideAudioSource;
@@ -219,6 +227,100 @@ namespace KinematicCharacterController.Examples
                     }
             }
         }
+
+        public void Update()
+        {
+            //SpawnFootstep(this.transform.position);
+        }
+
+
+
+
+
+        private bool spawnLeftFoot = true;
+        DecalProjector footprintProjector;
+        private GameObject spawned;
+
+        private void SpawnFootstep(Vector3 position)
+        {
+            Vector3 spawnPos = position + Vector3.up * 0.02f;
+
+            Vector3 forward = transform.forward;
+            forward.y = 0f;
+            forward.Normalize();
+
+            float angle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
+            Quaternion baseRotation = Quaternion.Euler(90f, angle, 0f);
+
+            Vector3 sideOffset = Vector3.Cross(Vector3.up, forward) * (spawnLeftFoot ? -.5f : .5f);
+            spawnPos += sideOffset;
+
+            float footAngleOffset = spawnLeftFoot ? -10f : 10f;
+            Quaternion spawnRot = baseRotation * Quaternion.Euler(0f, footAngleOffset, 0f);
+
+            // Spawn footstep and get the Decal Projector
+            spawned = Instantiate(FootstepPrefab, spawnPos, spawnRot);
+            footprintProjector = spawned.GetComponent<DecalProjector>();
+
+            // Ensure the Decal Projector is found
+            if (footprintProjector != null)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(position + Vector3.up * 1f, Vector3.down, out hit, 2f))
+                {
+                    Renderer groundRenderer = hit.collider.GetComponent<Renderer>();
+                    if (groundRenderer != null && groundRenderer.material.HasProperty("_Color"))
+                    {
+                        Color groundColor = groundRenderer.material.color;
+                        // Apply color with transparency to the Decal material
+                        footprintProjector.material.SetColor("_BaseColor", groundColor * new Color(1f, 1f, 1f, 0.5f));
+                    }
+                }
+
+                // Mirror texture scale if necessary
+                Vector2 textureScale = footprintProjector.material.mainTextureScale;
+                textureScale.x = spawnLeftFoot ? -1f : 1f;
+                footprintProjector.material.mainTextureScale = textureScale;
+
+                // Reset fadeFactor to 1 (fully visible) when a new footprint is spawned
+                footprintProjector.fadeFactor = 1f;
+
+                // Start fading it out with consistent behavior
+                StartCoroutine(FadeAndDestroyFootprint(spawned, footprintProjector, 5f)); // 5 seconds fade duration
+            }
+
+            spawnLeftFoot = !spawnLeftFoot;
+        }
+
+        private IEnumerator FadeAndDestroyFootprint(GameObject footprint, DecalProjector footprintProjector, float fadeDuration)
+        {
+            float elapsed = 0f;
+
+            // Fade the footprint out over time
+            while (elapsed < fadeDuration)
+            {
+                elapsed += Time.deltaTime;
+                footprintProjector.fadeFactor = Mathf.Lerp(.5f, 0f, elapsed / fadeDuration); // Lerp from 1 to 0
+                yield return null;
+            }
+
+            // Destroy the footprint after the fade is complete
+            Destroy(footprint);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         /// <summary>
         /// This is called every frame by ExamplePlayer in order to tell the character what its inputs are
@@ -466,6 +568,8 @@ namespace KinematicCharacterController.Examples
                 if (!wasGroundedLastFrame && !isSliding)
                 {
                     PlayLandSound();
+                    SpawnFootstep(this.transform.position);
+
                 }
 
                 wasGroundedLastFrame = true;
@@ -575,6 +679,7 @@ namespace KinematicCharacterController.Examples
 
                     if (_moveInputVector.sqrMagnitude > 0f && footstepDistanceCounter >= footstepInterval)
                     {
+                        SpawnFootstep(this.transform.position);
                         PlayFootstepSound();
                         footstepDistanceCounter = 0f;
                     }
