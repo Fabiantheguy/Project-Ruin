@@ -4,11 +4,8 @@ using UnityEngine;
 using KinematicCharacterController;
 using KinematicCharacterController.Examples;
 
-
 namespace KinematicCharacterController.Examples
 {
-
-
     public class ExamplePlayer : MonoBehaviour
     {
         public ExampleCharacterController Character;
@@ -116,21 +113,28 @@ namespace KinematicCharacterController.Examples
             }
         }
 
-
-
-
-
         private void HandleCharacterInput()
         {
             PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
 
+            // Prevent the arrow keys from affecting character movement (ignore them for movement)
+            float moveAxisForward = Input.GetAxisRaw(VerticalInput);
+            float moveAxisRight = Input.GetAxisRaw(HorizontalInput);
+
+            // If arrow keys are being used for movement, don't apply their values
+            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow))
+            {
+                moveAxisForward = 0f;
+                moveAxisRight = 0f;
+            }
+
             // Build the CharacterInputs struct
-            characterInputs.MoveAxisForward = Input.GetAxisRaw(VerticalInput);
-            characterInputs.MoveAxisRight = Input.GetAxisRaw(HorizontalInput);
-            characterInputs.CameraRotation = CharacterCamera.Transform.rotation;
-            characterInputs.JumpDown = Input.GetKeyDown(KeyCode.Space);
-            characterInputs.CrouchDown = Input.GetKeyDown(KeyCode.C);
-            characterInputs.CrouchUp = Input.GetKeyUp(KeyCode.C);
+            characterInputs.MoveAxisForward = moveAxisForward;
+            characterInputs.MoveAxisRight = moveAxisRight;
+            characterInputs.CameraRotation = CharacterCamera.Transform.rotation;  // Camera rotation
+            characterInputs.JumpDown = Input.GetKeyDown(KeyCode.Space);  // Jump input
+            characterInputs.CrouchDown = Input.GetKeyDown(KeyCode.C);  // Crouch down
+            characterInputs.CrouchUp = Input.GetKeyUp(KeyCode.C);  // Crouch up
 
             // Apply inputs to character
             Character.SetInputs(ref characterInputs);

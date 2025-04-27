@@ -38,6 +38,10 @@ namespace KinematicCharacterController.Examples
         public float ObstructionSharpness = 10000f;
         public List<Collider> IgnoredColliders = new List<Collider>();
 
+        [Header("Dynamic Framing")]
+        public float FramingLerpSharpness = 10f; // ✨ new: controls smoothness when changing framing
+        private Vector2 _targetFollowPointFraming;
+
         public Transform Transform { get; private set; }
         public Transform FollowTransform { get; private set; }
 
@@ -91,6 +95,15 @@ namespace KinematicCharacterController.Examples
             _targetVerticalAngle = 0f;
 
             PlanarDirection = Vector3.forward;
+
+            _targetFollowPointFraming = FollowPointFraming; // ✨ start synced
+        }
+
+        // ✨ Public function to set framing smoothly
+        public void SetFramingOffset(Vector2 newFraming, float sharpness)
+        {
+            _targetFollowPointFraming = newFraming;
+            FramingLerpSharpness = sharpness;
         }
 
         // Set the transform that the camera will orbit around
@@ -166,16 +179,19 @@ namespace KinematicCharacterController.Examples
                     if (closestHit.distance < Mathf.Infinity)
                     {
                         _distanceIsObstructed = true;
-                        _currentDistance = Mathf.Lerp(_currentDistance, closestHit.distance, 1 - Mathf.Exp(-ObstructionSharpness * deltaTime));
+                        _currentDistance = Mathf.Lerp(_currentDistance, closestHit.distance, 1f - Mathf.Exp(-ObstructionSharpness * deltaTime));
                     }
                     // If no obstruction
                     else
                     {
                         _distanceIsObstructed = false;
-                        _currentDistance = Mathf.Lerp(_currentDistance, TargetDistance, 1 - Mathf.Exp(-DistanceMovementSharpness * deltaTime));
+                        _currentDistance = Mathf.Lerp(_currentDistance, TargetDistance, 1f - Mathf.Exp(-DistanceMovementSharpness * deltaTime));
                     }
                 }
-                    
+
+                // Smoothly interpolate framing
+                FollowPointFraming = Vector2.Lerp(FollowPointFraming, _targetFollowPointFraming, 1f - Mathf.Exp(-FramingLerpSharpness * deltaTime));
+
                 // Find the smoothed camera orbit position
                 Vector3 targetPosition = _currentFollowPosition - ((targetRotation * Vector3.forward) * _currentDistance);
 
@@ -188,4 +204,4 @@ namespace KinematicCharacterController.Examples
             }
         }
     }
-}   
+}

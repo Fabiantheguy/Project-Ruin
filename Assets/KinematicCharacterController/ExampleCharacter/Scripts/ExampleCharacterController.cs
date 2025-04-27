@@ -257,21 +257,53 @@ namespace KinematicCharacterController.Examples
                 _timeSinceJumpRequested = 0f;
             }
 
-            if (inputs.CrouchDown)
+            // Handle crouch state
+            if (inputs.CrouchDown && !_isCrouching)  // Only apply crouch logic if not already crouching
             {
                 _shouldBeCrouching = true;
-                if (!_isCrouching)
-                {
-                    _isCrouching = true;
-                    Motor.SetCapsuleDimensions(0.5f, CrouchedCapsuleHeight, CrouchedCapsuleHeight * 0.5f);
-                    MeshRoot.localScale = new Vector3(1f, 0.5f, 1f);
-                }
+                _isCrouching = true;
+                Motor.SetCapsuleDimensions(0.5f, CrouchedCapsuleHeight, CrouchedCapsuleHeight * 0.5f);
+                MeshRoot.localScale = new Vector3(1f, 0.5f, 1f);
+
+                // Smooth camera transition when crouched
+                StartCoroutine(SmoothCameraTransition(CameraFollowPoint.localPosition.y - 0.5f)); // Lower camera when crouched
             }
-            else if (inputs.CrouchUp)
+            else if (inputs.CrouchUp && _isCrouching)  // Only apply uncrouch logic if currently crouching
             {
                 _shouldBeCrouching = false;
+                _isCrouching = false;
+
+                // Smooth camera transition when standing up
+                StartCoroutine(SmoothCameraTransition(CameraFollowPoint.localPosition.y + 0.5f)); // Raise camera when standing
             }
         }
+
+        private IEnumerator SmoothCameraTransition(float targetHeight)
+        {
+            float startHeight = CameraFollowPoint.localPosition.y;
+            float journeyLength = Mathf.Abs(targetHeight - startHeight);
+            float startTime = Time.time;
+
+            float speed = 5f;  // Adjust speed of smooth transition
+
+            while (Mathf.Abs(CameraFollowPoint.localPosition.y - targetHeight) > 0.01f) // Small threshold to stop
+            {
+                float distanceCovered = (Time.time - startTime) * speed;
+                float fractionOfJourney = distanceCovered / journeyLength;
+                CameraFollowPoint.localPosition = new Vector3(
+                    CameraFollowPoint.localPosition.x,
+                    Mathf.Lerp(startHeight, targetHeight, fractionOfJourney),
+                    CameraFollowPoint.localPosition.z
+                );
+                yield return null;
+            }
+
+            CameraFollowPoint.localPosition = new Vector3(CameraFollowPoint.localPosition.x, targetHeight, CameraFollowPoint.localPosition.z); // Ensure exact target position
+        }
+
+
+
+
 
         /// <summary>
         /// This is called every frame by the AI script in order to tell the character what its inputs are
