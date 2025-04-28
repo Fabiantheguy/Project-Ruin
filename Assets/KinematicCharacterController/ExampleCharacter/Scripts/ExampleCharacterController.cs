@@ -265,17 +265,7 @@ namespace KinematicCharacterController.Examples
             // Ensure the Decal Projector is found
             if (footprintProjector != null)
             {
-                RaycastHit hit;
-                if (Physics.Raycast(position + Vector3.up * 1f, Vector3.down, out hit, 2f))
-                {
-                    Renderer groundRenderer = hit.collider.GetComponent<Renderer>();
-                    if (groundRenderer != null && groundRenderer.material.HasProperty("_Color"))
-                    {
-                        Color groundColor = groundRenderer.material.color;
-                        // Apply color with transparency to the Decal material
-                        footprintProjector.material.SetColor("_BaseColor", groundColor * new Color(1f, 1f, 1f, 0.5f));
-                    }
-                }
+
 
                 // Mirror texture scale if necessary
                 Vector2 textureScale = footprintProjector.material.mainTextureScale;
@@ -286,7 +276,7 @@ namespace KinematicCharacterController.Examples
                 footprintProjector.fadeFactor = 1f;
 
                 // Start fading it out with consistent behavior
-                StartCoroutine(FadeAndDestroyFootprint(spawned, footprintProjector, 5f)); // 5 seconds fade duration
+                StartCoroutine(FadeAndDestroyFootprint(spawned, footprintProjector, 30f)); // 5 seconds fade duration
             }
 
             spawnLeftFoot = !spawnLeftFoot;
@@ -300,7 +290,7 @@ namespace KinematicCharacterController.Examples
             while (elapsed < fadeDuration)
             {
                 elapsed += Time.deltaTime;
-                footprintProjector.fadeFactor = Mathf.Lerp(.5f, 0f, elapsed / fadeDuration); // Lerp from 1 to 0
+                footprintProjector.fadeFactor = Mathf.Lerp(1f, 0f, elapsed / fadeDuration); // Lerp from 1 to 0
                 yield return null;
             }
 

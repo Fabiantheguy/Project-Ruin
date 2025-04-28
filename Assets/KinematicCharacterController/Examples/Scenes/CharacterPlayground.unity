@@ -4709,6 +4709,9 @@ MonoBehaviour:
   windVolumeMultiplier: 0.1
   MaxWindSpeed: 10
   footstepInterval: 2
+  FootstepPrefab: {fileID: 0}
+  LeftFootTransform: {fileID: 0}
+  RightFootTransform: {fileID: 0}
   audioSource: {fileID: 0}
   slideAudioSource: {fileID: 0}
   windAudioSource: {fileID: 0}
@@ -18630,6 +18633,9 @@ MonoBehaviour:
   windVolumeMultiplier: 0.1
   MaxWindSpeed: 10
   footstepInterval: 2
+  FootstepPrefab: {fileID: 0}
+  LeftFootTransform: {fileID: 0}
+  RightFootTransform: {fileID: 0}
   audioSource: {fileID: 0}
   slideAudioSource: {fileID: 0}
   windAudioSource: {fileID: 0}
@@ -22752,7 +22758,7 @@ Transform:
   m_GameObject: {fileID: 1004713168}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.063770175, y: -1.9848776, z: 8.540922}
+  m_LocalPosition: {x: -0.063770175, y: 25.9, z: 55.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -46144,6 +46150,9 @@ MonoBehaviour:
   windVolumeMultiplier: 0.1
   MaxWindSpeed: 10
   footstepInterval: 2
+  FootstepPrefab: {fileID: 0}
+  LeftFootTransform: {fileID: 0}
+  RightFootTransform: {fileID: 0}
   audioSource: {fileID: 0}
   slideAudioSource: {fileID: 0}
   windAudioSource: {fileID: 0}
@@ -46657,6 +46666,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   ObstructionSharpness: 10000
   IgnoredColliders: []
+  FramingLerpSharpness: 10
 --- !u!124 &5543738659990719153
 Behaviour:
   m_ObjectHideFlags: 0
@@ -46926,7 +46936,7 @@ Transform:
   m_GameObject: {fileID: 6508550501183087756}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.70710677}
-  m_LocalPosition: {x: -38.19, y: 0.08, z: -28.12}
+  m_LocalPosition: {x: -38.19, y: 32.39, z: -28.12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -47221,6 +47231,9 @@ MonoBehaviour:
   windVolumeMultiplier: 0.3
   MaxWindSpeed: 50
   footstepInterval: 2
+  FootstepPrefab: {fileID: 0}
+  LeftFootTransform: {fileID: 0}
+  RightFootTransform: {fileID: 0}
   audioSource: {fileID: 2011714032}
   slideAudioSource: {fileID: 1427466579}
   windAudioSource: {fileID: 708172645}

@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: c16540716d43a52419d74c2940ffe2b2
+AssetOrigin:
+  serializedVersion: 1
+  productId: 12964
+  packageName: Sand Textures Pack
+  packageVersion: 1.00
+  assetPath: Assets/Sand textures pack/Sand 05/diffuse.tga
+  uploadId: 29422
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -7,7 +14,7 @@ TextureImporter:
   mipmaps:
     mipMapMode: 0
     enableMipMap: 1
-    sRGBTexture: 1
+    sRGBTexture: 0
     linearTexture: 0
     fadeOut: 0
     borderMipMap: 0
@@ -54,7 +61,7 @@ TextureImporter:
   alphaUsage: 1
   alphaIsTransparency: 0
   spriteTessellationDetail: -1
-  textureType: 0
+  textureType: 1
   textureShape: 1
   singleChannelComponent: 0
   flipbookRows: 1
@@ -81,7 +88,7 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: Web
+    buildTarget: WebGL
     maxTextureSize: 512
     resizeAlgorithm: 0
     textureFormat: -1
@@ -193,10 +200,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 12964
-  packageName: Sand Textures Pack
-  packageVersion: 1.00
-  assetPath: Assets/Sand textures pack/Sand 05/diffuse.tga
-  uploadId: 29422
