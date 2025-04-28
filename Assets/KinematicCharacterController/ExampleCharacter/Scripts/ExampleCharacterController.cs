@@ -276,7 +276,7 @@ namespace KinematicCharacterController.Examples
                 footprintProjector.fadeFactor = 1f;
 
                 // Start fading it out with consistent behavior
-                StartCoroutine(FadeAndDestroyFootprint(spawned, footprintProjector, 30f)); // 5 seconds fade duration
+                StartCoroutine(FadeAndDestroyFootprint(spawned, footprintProjector, 5f)); // 5 seconds fade duration
             }
 
             spawnLeftFoot = !spawnLeftFoot;
@@ -290,7 +290,7 @@ namespace KinematicCharacterController.Examples
             while (elapsed < fadeDuration)
             {
                 elapsed += Time.deltaTime;
-                footprintProjector.fadeFactor = Mathf.Lerp(1f, 0f, elapsed / fadeDuration); // Lerp from 1 to 0
+                footprintProjector.fadeFactor = Mathf.Lerp(.5f, 0f, elapsed / fadeDuration); // Lerp from 1 to 0
                 yield return null;
             }
 
