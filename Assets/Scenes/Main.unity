@@ -9722,6 +9722,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 430929732}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &435651419
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 435651420}
+  m_Layer: 9
+  m_Name: Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &435651420
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435651419}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.57, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6505057340831361182}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &435716548
 GameObject:
   m_ObjectHideFlags: 0
@@ -31142,6 +31173,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1280674279}
   - component: {fileID: 1280674278}
+  - component: {fileID: 1280674280}
   m_Layer: 0
   m_Name: Day/Night_Holder
   m_TagString: Untagged
@@ -31165,9 +31197,14 @@ MonoBehaviour:
   moonCycleMinutes: 1
   sunTimeOfDay: 0
   moonTimeOfDay: 0
+  playerHead: {fileID: 435651420}
+  sunlightBlockingLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  isInSunlight: 0
   sunLight: {fileID: 1477484568}
   sunObject: {fileID: 839699928}
-  player: {fileID: 1004713170}
+  player: {fileID: 6505057340831361182}
   sunDistance: 3000
   sunInitialAngle: 90
   sunColorOverTime:
@@ -31206,17 +31243,17 @@ MonoBehaviour:
   moonInitialAngle: 90
   moonColorOverTime:
     serializedVersion: 2
-    key0: {r: 0.058490515, g: 0.30284548, b: 1, a: 1}
-    key1: {r: 0.07450981, g: 0.3372549, b: 1, a: 1}
-    key2: {r: 0.0745098, g: 0.80933505, b: 1, a: 0}
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 0.90196085, g: 0.92549026, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
-    ctime1: 44949
-    ctime2: 64224
+    ctime1: 65535
+    ctime2: 0
     ctime3: 0
     ctime4: 0
     ctime5: 0
@@ -31232,8 +31269,15 @@ MonoBehaviour:
     atime7: 0
     m_Mode: 0
     m_ColorSpace: -1
-    m_NumColorKeys: 3
+    m_NumColorKeys: 2
     m_NumAlphaKeys: 2
+  postProcessingVolume: {fileID: 1280674280}
+  vignetteSpeed: 0.1
+  sunlightVignetteTarget: 0.4
+  normalVignetteTarget: 0
+  mainCamera: {fileID: 5553693056096936871}
+  dayColor: {r: 0.21673898, g: 0.64095265, b: 0.82641506, a: 1}
+  nightColor: {r: 0.10925588, g: 0.18893753, b: 0.3735848, a: 1}
 --- !u!4 &1280674279
 Transform:
   m_ObjectHideFlags: 0
@@ -31251,6 +31295,23 @@ Transform:
   - {fileID: 772422080}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1280674280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280674277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: ab09877e2e707104187f6f83e2f62510, type: 2}
 --- !u!1 &1282747817
 GameObject:
   m_ObjectHideFlags: 0
@@ -34910,7 +34971,7 @@ Light:
   serializedVersion: 11
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.3
+  m_Intensity: 0.02
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -52000,6 +52061,9 @@ MonoBehaviour:
   MaxDistance: 0
   DistanceMovementSpeed: 5
   DistanceMovementSharpness: 10
+  vignetteMaterial: {fileID: 2100000, guid: 23c61b4e295761048b92a436e54747e8, type: 2}
+  dayNightCycle: {fileID: 1280674278}
+  transitionSpeed: 2
   InvertX: 0
   InvertY: 0
   DefaultVerticalAngle: 20
@@ -52041,7 +52105,7 @@ Camera:
   m_ShutterSpeed: 0.005
   m_Aperture: 16
   m_FocusDistance: 10
-  m_FocalLength: 50
+  m_FocalLength: 15.638705
   m_BladeCount: 5
   m_Curvature: {x: 2, y: 11}
   m_BarrelClipping: 0.25
@@ -52353,6 +52417,7 @@ Transform:
   - {fileID: 2011714031}
   - {fileID: 1427466578}
   - {fileID: 708172644}
+  - {fileID: 435651420}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
 --- !u!4 &6505238199867825826

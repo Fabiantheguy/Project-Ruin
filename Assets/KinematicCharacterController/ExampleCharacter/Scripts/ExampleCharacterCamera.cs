@@ -18,6 +18,12 @@ namespace KinematicCharacterController.Examples
         public float MaxDistance = 10f;
         public float DistanceMovementSpeed = 5f;
         public float DistanceMovementSharpness = 10f;
+        private float currentStrength = 0f;
+
+        [Header ("Orange Effect")]
+        public Material vignetteMaterial;
+        public DayNightCycle dayNightCycle;
+        public float transitionSpeed = 2f;
 
         [Header("Rotation")]
         public bool InvertX = false;
@@ -97,6 +103,23 @@ namespace KinematicCharacterController.Examples
             PlanarDirection = Vector3.forward;
 
             _targetFollowPointFraming = FollowPointFraming; // ✨ start synced
+        }
+
+        void OnRenderImage(RenderTexture src, RenderTexture dest)
+        {
+            if (vignetteMaterial == null || dayNightCycle == null)
+            {
+                Graphics.Blit(src, dest);
+                return;
+            }
+            Debug.Log($"Vignette Strength: {currentStrength}");
+
+            // Smoothly adjust the strength of the vignette
+            float targetStrength = dayNightCycle.isInSunlight ? 1f : 0f;
+            currentStrength = Mathf.Lerp(currentStrength, targetStrength, Time.deltaTime * transitionSpeed);
+
+            vignetteMaterial.SetFloat("_VignetteStrength", currentStrength);
+            Graphics.Blit(src, dest, vignetteMaterial);
         }
 
         // ✨ Public function to set framing smoothly
