@@ -14550,7 +14550,7 @@ VideoPlayer:
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: 
   m_RenderMode: 1
-  m_AspectRatio: 2
+  m_AspectRatio: 5
   m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
@@ -52682,7 +52682,7 @@ MonoBehaviour:
   CameraTransform: {fileID: 6505238199867825826}
   SlideInputControl: 0.5
   SlideControlResponsiveness: 5
-  SlideAcceleration: 20
+  SlideAcceleration: 30
   SlideDecayRate: 0.01
   SlideSlopeThreshold: 5
   SlideFriction: 0.2
@@ -52690,7 +52690,7 @@ MonoBehaviour:
   SlideInputControlStrength: 0.5
   _velocityBeforeGrounding: {x: 0, y: 0, z: 0}
   SlideLandingBoostMultiplier: 1.2
-  SteepSlopeAngleThreshold: 35
+  SteepSlopeAngleThreshold: 25
   SteepSlopeJumpBoostMultiplier: 1.4
   PassiveSteepSlopeSlideSpeed: 1.5
   MinSteepSlopeBoostSpeed: 5

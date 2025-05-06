@@ -146,12 +146,12 @@ public class DayNightCycle : MonoBehaviour
         if (sunVerticalAngle < 90f && moonVerticalAngle > 90f)
         {
             // Sun is higher than the moon, it's day time
-            mainCamera.backgroundColor = Color.Lerp(mainCamera.backgroundColor, dayColor, Time.deltaTime / 10f);
+            mainCamera.backgroundColor = Color.Lerp(mainCamera.backgroundColor, dayColor, Time.deltaTime);
         }
         else
         {
             // Moon is higher than the sun, it's night time
-            mainCamera.backgroundColor = Color.Lerp(mainCamera.backgroundColor, nightColor, Time.deltaTime / 10f);
+            mainCamera.backgroundColor = Color.Lerp(mainCamera.backgroundColor, nightColor, Time.deltaTime);
         }
     }
 }
