@@ -14396,7 +14396,7 @@ VideoPlayer:
   m_TargetMaterialProperty: 
   m_RenderMode: 1
   m_AspectRatio: 5
-  m_DataSource: 0
+  m_DataSource: 1
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
   m_AudioOutputMode: 2

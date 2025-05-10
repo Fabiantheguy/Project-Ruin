@@ -174,6 +174,7 @@ namespace KinematicCharacterController.Examples
 
         private void Awake()
         {
+            videoPlayer.url = System.IO.Path.Combine(Application.streamingAssetsPath, "Speedlines.mp4");
             // Handle initial state
             TransitionToState(CharacterState.Default);
 
