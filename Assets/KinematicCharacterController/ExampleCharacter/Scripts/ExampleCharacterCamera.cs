@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KinematicCharacterController.Examples
-{
+
+
     public class ExampleCharacterCamera : MonoBehaviour
     {
         [Header("Framing")]
@@ -54,17 +54,22 @@ namespace KinematicCharacterController.Examples
         public Vector3 PlanarDirection { get; set; }
         public float TargetDistance { get; set; }
 
-        public Vector3 PlanarForward
-        {
-            get
-            {
-                Vector3 forward = Transform.forward;
-                forward.y = 0f;
-                return forward.normalized;
-            }
-        }
+       [Header("Start Screen")]
+        public GameObject titleText;
+        public GameObject startButton;
 
-        public Vector3 PlanarRight
+        public GameObject character;
+        public Vector3 PlanarForward
+    {
+        get
+        {
+            Vector3 forward = Transform.forward;
+            forward.y = 0f;
+            return forward.normalized;
+        }
+    }
+
+    public Vector3 PlanarRight
         {
             get
             {
@@ -93,6 +98,7 @@ namespace KinematicCharacterController.Examples
 
         void Awake()
         {
+
             Transform = this.transform;
 
             _currentDistance = DefaultDistance;
@@ -105,6 +111,19 @@ namespace KinematicCharacterController.Examples
             _targetFollowPointFraming = FollowPointFraming; // ✨ start synced
         }
 
+    public void StartGame()
+    {
+        character.SetActive(true);
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        print("e");
+        titleText.SetActive(false);
+        startButton.SetActive(false);
+    }
+    
+
+
+        
         void OnRenderImage(RenderTexture src, RenderTexture dest)
         {
             if (vignetteMaterial == null || dayNightCycle == null)
@@ -227,4 +246,5 @@ namespace KinematicCharacterController.Examples
             }
         }
     }
-}
+
+
