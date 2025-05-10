@@ -151,7 +151,7 @@ public class DayNightCycle : MonoBehaviour
         else
         {
             // Moon is higher than the sun, it's night time
-            mainCamera.backgroundColor = Color.Lerp(mainCamera.backgroundColor, nightColor, Time.deltaTime);
+            mainCamera.backgroundColor = Color.Lerp(mainCamera.backgroundColor, nightColor, Time.deltaTime  );
         }
     }
 }
