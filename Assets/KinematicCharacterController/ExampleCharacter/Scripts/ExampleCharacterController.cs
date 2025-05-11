@@ -242,10 +242,6 @@ using UnityEngine.Rendering.Universal;
             MaxStableMoveSpeed = Mathf.Lerp(MaxStableMoveSpeed, targetSpeed, Time.deltaTime * speedAdjustRate);
         }
 
-
-
-
-
         private bool spawnLeftFoot = true;
         DecalProjector footprintProjector;
         private GameObject spawned;
@@ -306,18 +302,6 @@ using UnityEngine.Rendering.Universal;
             // Destroy the footprint after the fade is complete
             Destroy(footprint);
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -748,11 +732,13 @@ using UnityEngine.Rendering.Universal;
                     float adjustedJumpSpeed = JumpUpSpeed;
                     if (slopeAngle > SteepSlopeAngleThreshold && horizontalSpeed > MinSteepSlopeBoostSpeed)
                     {
-                        float boostFactor = Mathf.InverseLerp(MinSteepSlopeBoostSpeed, MaxSteepSlopeBoostSpeed, horizontalSpeed);
-                        adjustedJumpSpeed *= Mathf.Lerp(1f, SteepSlopeJumpBoostMultiplier, boostFactor);
-                    }
+                    float boostFactor = Mathf.InverseLerp(MinSteepSlopeBoostSpeed, MaxSteepSlopeBoostSpeed, horizontalSpeed);
+                    float dynamicSteepSlopeMultiplier = Mathf.Lerp(1f, Mathf.Clamp(totalSpeed / 10f, 1f, 2f), boostFactor);
+                    adjustedJumpSpeed *= dynamicSteepSlopeMultiplier;
 
-                    Motor.ForceUnground();
+                }
+
+                Motor.ForceUnground();
                     currentVelocity += jumpDir * adjustedJumpSpeed;
 
                     PlayJumpSound();
