@@ -22552,7 +22552,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 9, y: 175}
+  m_AnchoredPosition: {x: 9, y: 188.7}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &921100603
@@ -24591,7 +24591,7 @@ GameObject:
   - component: {fileID: 988791001}
   - component: {fileID: 988791000}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Canvas_
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32147,7 +32147,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 9, y: 81.7}
+  m_AnchoredPosition: {x: 9, y: 92}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1299939770
@@ -32172,9 +32172,12 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Move - WASD
 
+    Look - Arrows / Mouse
+
     Jump - Space
 
-    Slide/Crouch - C'
+    Slide /
+    Crouch - C'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 81edee1839ac2e449a6d7525d7d00d3d, type: 2}
   m_sharedMaterial: {fileID: -3720108468164204349, guid: 81edee1839ac2e449a6d7525d7d00d3d, type: 2}
@@ -32239,7 +32242,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -180.78442, w: 0}
+  m_margin: {x: 0, y: 0, z: -239.44238, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -52486,7 +52489,7 @@ MonoBehaviour:
   ObstructionSharpness: 10000
   IgnoredColliders: []
   FramingLerpSharpness: 10
-  titleText: {fileID: 1471200290}
+  titleText: {fileID: 988790999}
   startButton: {fileID: 602676424}
   character: {fileID: 6508550501183087756}
 --- !u!124 &5543738659990719153
@@ -53097,7 +53100,7 @@ MonoBehaviour:
   CameraTransform: {fileID: 6505238199867825826}
   SlideInputControl: 0.5
   SlideControlResponsiveness: 5
-  SlideAcceleration: 30
+  SlideAcceleration: 45
   SlideDecayRate: 0.01
   SlideSlopeThreshold: 5
   SlideFriction: 0.2
@@ -53105,11 +53108,11 @@ MonoBehaviour:
   SlideInputControlStrength: 0.5
   _velocityBeforeGrounding: {x: 0, y: 0, z: 0}
   SlideLandingBoostMultiplier: 1.2
-  SteepSlopeAngleThreshold: 25
-  SteepSlopeJumpBoostMultiplier: 1.4
+  SteepSlopeAngleThreshold: 12
+  SteepSlopeJumpBoostMultiplier: 2.5
   PassiveSteepSlopeSlideSpeed: 1.5
-  MinSteepSlopeBoostSpeed: 5
-  MaxSteepSlopeBoostSpeed: 12
+  MinSteepSlopeBoostSpeed: 10
+  MaxSteepSlopeBoostSpeed: 50
   BounceMultiplier: 8
   sandFootstepClip: {fileID: 8300000, guid: 595844f5fd2d4304cbcbbee62a801fd1, type: 3}
   jumpClip: {fileID: 8300000, guid: 132a5b424a018ef409bf835cb5b1a659, type: 3}
