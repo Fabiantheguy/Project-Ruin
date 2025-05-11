@@ -6,8 +6,7 @@ using System;
 using UnityEngine.Video;
 using UnityEngine.Rendering.Universal;
 
-namespace KinematicCharacterController.Examples
-{
+
     public enum CharacterState
     {
         Default,
@@ -51,7 +50,15 @@ namespace KinematicCharacterController.Examples
         public float StableMovementSharpness = 15f;
         public float OrientationSharpness = 10f;
         public OrientationMethod OrientationMethod = OrientationMethod.TowardsCamera;
+
+        [Header("Sunlight Effect")]
+        public float normalMaxSpeed = 10f;
+        public float sunlightMinSpeed = 5f;
+        public float speedAdjustRate = .3f; // Speed of transition
+
         private bool _justBoostedThisFrame = false;
+
+        public bool isInSunlight = false; // Set by sunlight detection script
 
 
         [Header("Air Movement")]
@@ -231,7 +238,8 @@ namespace KinematicCharacterController.Examples
 
         public void Update()
         {
-            //SpawnFootstep(this.transform.position);
+            float targetSpeed = isInSunlight ? sunlightMinSpeed : normalMaxSpeed;
+            MaxStableMoveSpeed = Mathf.Lerp(MaxStableMoveSpeed, targetSpeed, Time.deltaTime * speedAdjustRate);
         }
 
 
@@ -992,4 +1000,3 @@ namespace KinematicCharacterController.Examples
         {
         }
     }
-}

@@ -5166,6 +5166,10 @@ MonoBehaviour:
   StableMovementSharpness: 15
   OrientationSharpness: 10
   OrientationMethod: 0
+  normalMaxSpeed: 10
+  sunlightMinSpeed: 3
+  speedAdjustRate: 2
+  isInSunlight: 0
   MaxAirMoveSpeed: 15
   AirAccelerationSpeed: 30
   Drag: 0.1
@@ -14162,11 +14166,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1247398574}
-  m_Father: {fileID: 1072360589}
+  m_Father: {fileID: 988791003}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 165, y: -48.000008}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -154, y: 97}
   m_SizeDelta: {x: 320, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &602676426
@@ -20339,6 +20343,10 @@ MonoBehaviour:
   StableMovementSharpness: 15
   OrientationSharpness: 10
   OrientationMethod: 0
+  normalMaxSpeed: 10
+  sunlightMinSpeed: 3
+  speedAdjustRate: 2
+  isInSunlight: 0
   MaxAirMoveSpeed: 15
   AirAccelerationSpeed: 30
   Drag: 0.1
@@ -24527,7 +24535,9 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1471200291}
+  - {fileID: 602676425}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -26266,9 +26276,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 602676425}
-  - {fileID: 1471200291}
+  m_Children: []
   m_Father: {fileID: 745170739}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -31329,9 +31337,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14f51a130dee7214c9684c38d21d06af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sunCycleMinutes: 1
-  moonCycleMinutes: 1
-  sunTimeOfDay: 0
+  sunCycleMinutes: 0.5
+  moonCycleMinutes: 3
+  sunTimeOfDay: 0.2
   moonTimeOfDay: 0
   playerHead: {fileID: 435651420}
   sunlightBlockingLayers:
@@ -31375,7 +31383,7 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   moonLight: {fileID: 1445014882}
   moonObject: {fileID: 772422079}
-  moonDistance: -3000
+  moonDistance: 3000
   moonInitialAngle: 90
   moonColorOverTime:
     serializedVersion: 2
@@ -31408,12 +31416,13 @@ MonoBehaviour:
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   postProcessingVolume: {fileID: 1280674280}
-  vignetteSpeed: 0.1
-  sunlightVignetteTarget: 0.4
+  vignetteSpeed: 0.3
+  sunlightVignetteTarget: 0.6
   normalVignetteTarget: 0
   mainCamera: {fileID: 5553693056096936871}
   dayColor: {r: 0.21673898, g: 0.64095265, b: 0.82641506, a: 1}
   nightColor: {r: 0.10925588, g: 0.18893753, b: 0.3735848, a: 1}
+  playerController: {fileID: 6611558534064293502}
 --- !u!4 &1280674279
 Transform:
   m_ObjectHideFlags: 0
@@ -34621,7 +34630,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -35802,11 +35811,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1072360589}
+  m_Father: {fileID: 988791003}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -223.4, y: 88.9}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 95.600006, y: -56.1}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1471200292
@@ -51523,6 +51532,10 @@ MonoBehaviour:
   StableMovementSharpness: 15
   OrientationSharpness: 10
   OrientationMethod: 0
+  normalMaxSpeed: 10
+  sunlightMinSpeed: 3
+  speedAdjustRate: 2
+  isInSunlight: 0
   MaxAirMoveSpeed: 15
   AirAccelerationSpeed: 30
   Drag: 0.1
@@ -52773,6 +52786,10 @@ MonoBehaviour:
   StableMovementSharpness: 2
   OrientationSharpness: 20
   OrientationMethod: 0
+  normalMaxSpeed: 10
+  sunlightMinSpeed: 3
+  speedAdjustRate: 0.3
+  isInSunlight: 0
   MaxAirMoveSpeed: 3
   AirAccelerationSpeed: 85
   Drag: 0

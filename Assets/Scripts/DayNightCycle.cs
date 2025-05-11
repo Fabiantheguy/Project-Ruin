@@ -7,6 +7,8 @@ public class DayNightCycle : MonoBehaviour
     [Header("Cycle Settings")]
     public float sunCycleMinutes = 1f;
     public float moonCycleMinutes = 1f;
+    private bool sunActive = true;
+    private bool moonActive = false;
     [Range(0f, 1f)] public float sunTimeOfDay = 0f;
     [Range(0f, 1f)] public float moonTimeOfDay = 0f;
 
@@ -41,6 +43,9 @@ public class DayNightCycle : MonoBehaviour
     public Camera mainCamera;
     public Color dayColor = Color.cyan;
     public Color nightColor = Color.black;
+    private Color targetSkyColor;
+
+    public ExampleCharacterController playerController;
 
     void Start()
     {
@@ -51,8 +56,12 @@ public class DayNightCycle : MonoBehaviour
 
         if (mainCamera == null)
         {
-            mainCamera = Camera.main; // Ensure the camera is assigned
+            mainCamera = Camera.main;
         }
+
+        // Set initial sky color based on starting light
+        targetSkyColor = sunActive ? dayColor : nightColor;
+        mainCamera.backgroundColor = targetSkyColor;
     }
 
     void Update()
@@ -60,14 +69,39 @@ public class DayNightCycle : MonoBehaviour
         float sunSpeed = 1f / (sunCycleMinutes * 60f);
         float moonSpeed = 1f / (moonCycleMinutes * 60f);
 
-        sunTimeOfDay += Time.deltaTime * sunSpeed;
-        if (sunTimeOfDay > 1f) sunTimeOfDay -= 1f;
+        if (sunActive)
+        {
+            sunTimeOfDay += Time.deltaTime * sunSpeed;
+            if (sunTimeOfDay >= 0.8f)
+            {
+                sunTimeOfDay = 0.8f;
+                sunActive = false;
+                moonActive = true;
+                moonTimeOfDay = 0.2f;
 
-        moonTimeOfDay += Time.deltaTime * moonSpeed;
-        if (moonTimeOfDay > 1f) moonTimeOfDay -= 1f;
+                targetSkyColor = nightColor;
+            }
+        }
+        else if (moonActive)
+        {
+            moonTimeOfDay += Time.deltaTime * moonSpeed;
+            if (moonTimeOfDay >= 0.8f)
+            {
+                moonTimeOfDay = 0.8f;
+                moonActive = false;
+                sunActive = true;
+                sunTimeOfDay = 0.2f;
 
-        UpdateSunPositionAndLighting();
-        UpdateMoonPositionAndLighting();
+                targetSkyColor = dayColor;
+            }
+        }
+
+        if (sunActive || sunTimeOfDay > 0f)
+            UpdateSunPositionAndLighting();
+
+        if (moonActive || moonTimeOfDay > 0f)
+            UpdateMoonPositionAndLighting();
+
         CheckSunlight();
     }
 
@@ -127,6 +161,11 @@ public class DayNightCycle : MonoBehaviour
             isInSunlight = true;
         }
 
+        if (playerController != null)
+        {
+            playerController.isInSunlight = isInSunlight;
+        }
+
         if (vignette != null)
         {
             float targetIntensity = isInSunlight ? sunlightVignetteTarget : normalVignetteTarget;
@@ -138,20 +177,6 @@ public class DayNightCycle : MonoBehaviour
 
     void UpdateBackgroundColor()
     {
-        // Get the sun's and moon's vertical angle to determine if it's day or night
-        float sunVerticalAngle = sunObject.transform.rotation.eulerAngles.x;
-        float moonVerticalAngle = moonObject.transform.rotation.eulerAngles.x;
-
-        // Transition based on the sun's and moon's vertical position
-        if (sunVerticalAngle < 90f && moonVerticalAngle > 90f)
-        {
-            // Sun is higher than the moon, it's day time
-            mainCamera.backgroundColor = Color.Lerp(mainCamera.backgroundColor, dayColor, Time.deltaTime);
-        }
-        else
-        {
-            // Moon is higher than the sun, it's night time
-            mainCamera.backgroundColor = Color.Lerp(mainCamera.backgroundColor, nightColor, Time.deltaTime  );
-        }
+        mainCamera.backgroundColor = Color.Lerp(mainCamera.backgroundColor, targetSkyColor, Time.deltaTime);
     }
 }
