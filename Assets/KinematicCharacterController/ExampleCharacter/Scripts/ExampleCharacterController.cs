@@ -59,7 +59,7 @@ using UnityEngine.Rendering.Universal;
         private bool _justBoostedThisFrame = false;
 
         public bool isInSunlight = false; // Set by sunlight detection script
-
+        
 
         [Header("Air Movement")]
         public float MaxAirMoveSpeed = 15f;

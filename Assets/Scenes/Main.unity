@@ -52957,7 +52957,7 @@ MonoBehaviour:
   SlideControlResponsiveness: 5
   SlideAcceleration: 50
   SlideDecayRate: 0.02
-  SlideSlopeThreshold: 8
+  SlideSlopeThreshold: 5
   SlideFriction: 0.2
   SlideInputSpeedThreshold: 3
   SlideInputControlStrength: 0.5
