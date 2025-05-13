@@ -304,11 +304,16 @@ using UnityEngine.Rendering.Universal;
         }
 
 
+    private float standingCameraHeight = 1.0f;  // Adjust to your standing height
+    private float crouchedCameraHeight = 0.5f;  // Adjust to your crouched height
 
-        /// <summary>
-        /// This is called every frame by ExamplePlayer in order to tell the character what its inputs are
-        /// </summary>
-        public void SetInputs(ref PlayerCharacterInputs inputs)
+    private Coroutine cameraTransitionCoroutine;
+
+
+    /// <summary>
+    /// This is called every frame by ExamplePlayer in order to tell the character what its inputs are
+    /// </summary>
+    public void SetInputs(ref PlayerCharacterInputs inputs)
         {
             // Get raw input
             Vector3 rawInput = new Vector3(inputs.MoveAxisRight, 0f, inputs.MoveAxisForward);
@@ -317,6 +322,7 @@ using UnityEngine.Rendering.Universal;
             Vector3 viewForward = Vector3.ProjectOnPlane(CameraTransform.forward, Motor.CharacterUp).normalized;
             Vector3 viewRight = Vector3.ProjectOnPlane(CameraTransform.right, Motor.CharacterUp).normalized;
             _moveInputVector = (viewForward * rawInput.z + viewRight * rawInput.x).normalized;
+
 
             // Look direction based on orientation setting
             Vector3 cameraPlanarDirection = Vector3.ProjectOnPlane(inputs.CameraRotation * Vector3.forward, Motor.CharacterUp).normalized;
@@ -342,58 +348,75 @@ using UnityEngine.Rendering.Universal;
                 _timeSinceJumpRequested = 0f;
             }
 
-            // Handle crouch state
-            if (inputs.CrouchDown && !_isCrouching)  // Only apply crouch logic if not already crouching
-            {
-                _shouldBeCrouching = true;
-                _isCrouching = true;
-                Motor.SetCapsuleDimensions(0.5f, CrouchedCapsuleHeight, CrouchedCapsuleHeight * 0.5f);
-                MeshRoot.localScale = new Vector3(1f, 0.5f, 1f);
-
-                // Smooth camera transition when crouched
-                StartCoroutine(SmoothCameraTransition(CameraFollowPoint.localPosition.y - 0.5f)); // Lower camera when crouched
-            }
-            else if (inputs.CrouchUp && _isCrouching)  // Only apply uncrouch logic if currently crouching
-            {
-                _shouldBeCrouching = false;
-                _isCrouching = false;
-
-                // Smooth camera transition when standing up
-                StartCoroutine(SmoothCameraTransition(CameraFollowPoint.localPosition.y + 0.5f)); // Raise camera when standing
-            }
-        }
-
-        private IEnumerator SmoothCameraTransition(float targetHeight)
+        if (inputs.CrouchDown && !_isCrouching)
         {
-            float startHeight = CameraFollowPoint.localPosition.y;
-            float journeyLength = Mathf.Abs(targetHeight - startHeight);
-            float startTime = Time.time;
+            _shouldBeCrouching = true;
+            _isCrouching = true;
+            Motor.SetCapsuleDimensions(0.5f, CrouchedCapsuleHeight, CrouchedCapsuleHeight * 0.5f);
+            MeshRoot.localScale = new Vector3(1f, 0.5f, 1f);
 
-            float speed = 5f;  // Adjust speed of smooth transition
+            StartCameraTransition(crouchedCameraHeight);
+        }
+        else if (inputs.CrouchUp && _isCrouching)
+        {
+            _shouldBeCrouching = false;
+            _isCrouching = false;
 
-            while (Mathf.Abs(CameraFollowPoint.localPosition.y - targetHeight) > 0.01f) // Small threshold to stop
-            {
-                float distanceCovered = (Time.time - startTime) * speed;
-                float fractionOfJourney = distanceCovered / journeyLength;
-                CameraFollowPoint.localPosition = new Vector3(
-                    CameraFollowPoint.localPosition.x,
-                    Mathf.Lerp(startHeight, targetHeight, fractionOfJourney),
-                    CameraFollowPoint.localPosition.z
-                );
-                yield return null;
-            }
-
-            CameraFollowPoint.localPosition = new Vector3(CameraFollowPoint.localPosition.x, targetHeight, CameraFollowPoint.localPosition.z); // Ensure exact target position
+            StartCameraTransition(standingCameraHeight);
         }
 
+    }
+
+    // These methods MUST be placed outside any other method
+    private void StartCameraTransition(float targetHeight)
+    {
+        if (cameraTransitionCoroutine != null)
+        {
+            StopCoroutine(cameraTransitionCoroutine);
+        }
+        cameraTransitionCoroutine = StartCoroutine(SmoothCameraTransition(targetHeight));
+    }
+
+    private IEnumerator SmoothCameraTransition(float targetHeight)
+    {
+        float startHeight = CameraFollowPoint.localPosition.y;
+        targetHeight = Mathf.Clamp(targetHeight, crouchedCameraHeight, standingCameraHeight); // Clamp target
+
+        float journeyLength = Mathf.Abs(targetHeight - startHeight);
+        float startTime = Time.time;
+        float speed = 3f;
+
+        while (Mathf.Abs(CameraFollowPoint.localPosition.y - targetHeight) > 0.01f)
+        {
+            float distanceCovered = (Time.time - startTime) * speed;
+            float fractionOfJourney = distanceCovered / journeyLength;
+            float newY = Mathf.Lerp(startHeight, targetHeight, fractionOfJourney);
+            newY = Mathf.Clamp(newY, crouchedCameraHeight, standingCameraHeight); // Clamp current value
+
+            CameraFollowPoint.localPosition = new Vector3(
+                CameraFollowPoint.localPosition.x,
+                newY,
+                CameraFollowPoint.localPosition.z
+            );
+            yield return null;
+        }
+
+        CameraFollowPoint.localPosition = new Vector3(
+            CameraFollowPoint.localPosition.x,
+            targetHeight,
+            CameraFollowPoint.localPosition.z
+        );
+        cameraTransitionCoroutine = null;
+    }
 
 
 
 
-        /// <summary>
-        /// This is called every frame by the AI script in order to tell the character what its inputs are
-        /// </summary>
-        public void SetInputs(ref AICharacterInputs inputs)
+
+    /// <summary>
+    /// This is called every frame by the AI script in order to tell the character what its inputs are
+    /// </summary>
+    public void SetInputs(ref AICharacterInputs inputs)
         {
             _moveInputVector = inputs.MoveVector;
             _lookInputVector = inputs.LookVector;

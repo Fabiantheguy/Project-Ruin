@@ -31559,7 +31559,7 @@ MonoBehaviour:
   mainCamera: {fileID: 5553693056096936871}
   dayColor: {r: 0.21673898, g: 0.64095265, b: 0.82641506, a: 1}
   nightColor: {r: 0.10925588, g: 0.18893753, b: 0.3735848, a: 1}
-  playerController: {fileID: 6611558534064293502}
+  playerController: {fileID: 0}
 --- !u!4 &1280674279
 Transform:
   m_ObjectHideFlags: 0
@@ -52955,10 +52955,10 @@ MonoBehaviour:
   CameraTransform: {fileID: 6505238199867825826}
   SlideInputControl: 0.5
   SlideControlResponsiveness: 5
-  SlideAcceleration: 50
+  SlideAcceleration: 90
   SlideDecayRate: 0.02
   SlideSlopeThreshold: 5
-  SlideFriction: 0.2
+  SlideFriction: 0.1
   SlideInputSpeedThreshold: 3
   SlideInputControlStrength: 0.5
   _velocityBeforeGrounding: {x: 0, y: 0, z: 0}
