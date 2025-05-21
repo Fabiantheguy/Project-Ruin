@@ -57,6 +57,7 @@ using UnityEngine;
        [Header("Start Screen")]
         public GameObject titleText;
         public GameObject controlsText;
+        public GameObject controlsHeader;
         public GameObject objectiveText;
         public GameObject startButton;
 
@@ -120,6 +121,7 @@ using UnityEngine;
         Cursor.visible = false;
         print("e");
         controlsText.SetActive(false);
+        controlsHeader.SetActive(false);
         titleText.SetActive(false);
         startButton.SetActive(false);
         objectiveText.SetActive(false);
