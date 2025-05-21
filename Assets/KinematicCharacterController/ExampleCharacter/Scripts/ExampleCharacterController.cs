@@ -121,6 +121,12 @@ using UnityEngine.Rendering.Universal;
         private float _momentumDecayDuration = 4f;  // Time in seconds before momentum starts decaying
         private float _momentumDecayRate = 0f;     // Rate at which momentum decays
         [Header("Sliding")]
+       public float _slideTime = 0f;
+    [SerializeField] private float MaxSlideTime = 3f; // seconds to reach max boost
+    [SerializeField] private float MaxSlideAccelerationMultiplier = 2.5f; // how much stronger acceleration gets
+
+
+    public float MaxSlideSpeed = 25f; 
         public float SlideInputControl = 2f; // How much the player can steer while sliding
         public float SlideControlResponsiveness = 5f; // How quickly player input affects sliding
         public float SlideAcceleration = 20f; // Extra push on slopes
@@ -611,11 +617,20 @@ using UnityEngine.Rendering.Universal;
 
                     if (slopeAngle > SlideSlopeThreshold)
                     {
+                        if (currentSpeed > SlideInputSpeedThreshold)
+                        {
+                            _slideTime += deltaTime;
+                        }
+                        float slideSpeedFactor = Mathf.Lerp(1f, MaxSlideAccelerationMultiplier, _slideTime / MaxSlideTime);
                         Vector3 slopeDir = Vector3.ProjectOnPlane(Vector3.down, effectiveGroundNormal).normalized;
-                        currentVelocity += slopeDir * SlideAcceleration * deltaTime;
+                        currentVelocity += slopeDir * SlideAcceleration * slideSpeedFactor * deltaTime;
+                    }
+                    else
+                    {
+                        _slideTime = 0f; // Reset if not on a valid slope
                     }
 
-                    if (!_justBoostedThisFrame)
+                     if (!_justBoostedThisFrame)
                     {
                         if (_momentumTimer <= 0f)
                         {
@@ -636,12 +651,17 @@ using UnityEngine.Rendering.Universal;
                         StopSlideSound();
                     }
 
+                    if (currentVelocity.magnitude > MaxSlideSpeed)
+                    {
+                        currentVelocity = currentVelocity.normalized * MaxSlideSpeed;
+                    }
                     StopFootstepSound();
 
                     _justBoostedThisFrame = false;
                 }
                 else
                 {
+                    _slideTime = 0f;
                     float currentVelocityMagnitude = currentVelocity.magnitude;
                     currentVelocity = Motor.GetDirectionTangentToSurface(currentVelocity, effectiveGroundNormal) * currentVelocityMagnitude;
 

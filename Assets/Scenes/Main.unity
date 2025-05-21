@@ -5353,6 +5353,10 @@ MonoBehaviour:
   GroundFriction: 8
   BunnyHopGraceTime: 0.1
   CameraTransform: {fileID: 0}
+  _slideTime: 0
+  MaxSlideTime: 3
+  MaxSlideAccelerationMultiplier: 2.5
+  MaxSlideSpeed: 25
   SlideInputControl: 2
   SlideControlResponsiveness: 5
   SlideAcceleration: 20
@@ -21576,6 +21580,10 @@ MonoBehaviour:
   GroundFriction: 8
   BunnyHopGraceTime: 0.1
   CameraTransform: {fileID: 0}
+  _slideTime: 0
+  MaxSlideTime: 3
+  MaxSlideAccelerationMultiplier: 2.5
+  MaxSlideSpeed: 25
   SlideInputControl: 2
   SlideControlResponsiveness: 5
   SlideAcceleration: 20
@@ -33668,7 +33676,7 @@ MonoBehaviour:
   mainCamera: {fileID: 5553693056096936871}
   dayColor: {r: 0.21673898, g: 0.64095265, b: 0.82641506, a: 1}
   nightColor: {r: 0.10925588, g: 0.18893753, b: 0.3735848, a: 1}
-  playerController: {fileID: 0}
+  playerController: {fileID: 6611558534064293502}
 --- !u!4 &1280674279
 Transform:
   m_ObjectHideFlags: 0
@@ -36315,7 +36323,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1392188046}
   - component: {fileID: 1392188048}
-  - component: {fileID: 1392188047}
+  - component: {fileID: 1392188049}
   m_Layer: 0
   m_Name: Oasis Collider
   m_TagString: Untagged
@@ -36331,34 +36339,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1392188045}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -21, y: 0, z: 19}
-  m_LocalScale: {x: 280.7, y: 280.7, z: 280.7}
-  m_ConstrainProportionsScale: 1
+  m_LocalRotation: {x: -0, y: 0.7631985, z: -0, w: 0.6461642}
+  m_LocalPosition: {x: -8.3, y: 0, z: 25.8}
+  m_LocalScale: {x: 63.6, y: 47.6, z: 137.1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1319233118}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &1392188047
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1392188045}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 99.494, z: 0}
 --- !u!23 &1392188048
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -36404,6 +36391,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1392188049
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1392188045}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1394772824
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -55365,6 +55373,10 @@ MonoBehaviour:
   GroundFriction: 8
   BunnyHopGraceTime: 0.1
   CameraTransform: {fileID: 0}
+  _slideTime: 0
+  MaxSlideTime: 3
+  MaxSlideAccelerationMultiplier: 2.5
+  MaxSlideSpeed: 25
   SlideInputControl: 2
   SlideControlResponsiveness: 5
   SlideAcceleration: 20
@@ -56108,7 +56120,7 @@ Transform:
   m_GameObject: {fileID: 5572022742420398803}
   serializedVersion: 2
   m_LocalRotation: {x: -0.1090835, y: 0.7414394, z: 0.08226545, w: 0.65696335}
-  m_LocalPosition: {x: -610.1501, y: 43, z: -306}
+  m_LocalPosition: {x: 968.7, y: 32.05, z: -106}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -56348,7 +56360,7 @@ Transform:
   m_GameObject: {fileID: 6508550501183087756}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.76604444, z: 0, w: 0.64278764}
-  m_LocalPosition: {x: -2134, y: 43, z: -306}
+  m_LocalPosition: {x: 968.7, y: 26.302, z: -106}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -56595,11 +56607,11 @@ MonoBehaviour:
   OrientationSharpness: 20
   OrientationMethod: 0
   normalMaxSpeed: 10
-  sunlightMinSpeed: 3
-  speedAdjustRate: 0.3
+  sunlightMinSpeed: 1
+  speedAdjustRate: 0.4
   isInSunlight: 0
-  MaxAirMoveSpeed: 3
-  AirAccelerationSpeed: 85
+  MaxAirMoveSpeed: 4
+  AirAccelerationSpeed: 90
   Drag: 0
   AllowJumpingWhenSliding: 1
   JumpUpSpeed: 10
@@ -56624,22 +56636,26 @@ MonoBehaviour:
   GroundFriction: -10
   BunnyHopGraceTime: 0.1
   CameraTransform: {fileID: 6505238199867825826}
+  _slideTime: 0
+  MaxSlideTime: 15
+  MaxSlideAccelerationMultiplier: 20
+  MaxSlideSpeed: 150
   SlideInputControl: 0.5
   SlideControlResponsiveness: 5
-  SlideAcceleration: 90
+  SlideAcceleration: 70
   SlideDecayRate: 0.02
   SlideSlopeThreshold: 5
   SlideFriction: 0.1
   SlideInputSpeedThreshold: 3
   SlideInputControlStrength: 0.5
   _velocityBeforeGrounding: {x: 0, y: 0, z: 0}
-  SlideLandingBoostMultiplier: 1.2
+  SlideLandingBoostMultiplier: 2
   SteepSlopeAngleThreshold: 13
   SteepSlopeJumpBoostMultiplier: 2.5
   PassiveSteepSlopeSlideSpeed: 1.5
   MinSteepSlopeBoostSpeed: 8
   MaxSteepSlopeBoostSpeed: 30
-  BounceMultiplier: 8
+  BounceMultiplier: 10
   sandFootstepClip: {fileID: 8300000, guid: 595844f5fd2d4304cbcbbee62a801fd1, type: 3}
   jumpClip: {fileID: 8300000, guid: 132a5b424a018ef409bf835cb5b1a659, type: 3}
   landClip: {fileID: 8300000, guid: 35f593acfc7a9dc479cf6559937500c7, type: 3}
@@ -56718,6 +56734,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 498459728}
+  colliderA: {fileID: 6607685709280838954}
+  colliderB: {fileID: 1392188049}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
